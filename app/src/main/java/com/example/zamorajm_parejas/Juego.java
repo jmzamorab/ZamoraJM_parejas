@@ -2,6 +2,7 @@ package com.example.zamorajm_parejas;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,12 +15,16 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.google.android.gms.games.Games;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class Juego extends Activity {
+    private static final int RC_SAVED_GAMES = 9009;
+
     private Drawable imagenOculta;
     private List<Drawable> imagenes;
     private Casilla primeraCasilla;
@@ -44,6 +49,9 @@ public class Juego extends Activity {
         switch (Partida.tipoPartida) {
             case "LOCAL":
                 mostrarTablero();
+                break;
+            case "GUARDADA":
+                mostrarPartidasGuardadas();
                 break;
         }
     }
@@ -182,4 +190,11 @@ public class Juego extends Activity {
         botones[x][y] = button;
         return button;
     }
+
+    private void mostrarPartidasGuardadas() {
+        int maxNumberOfSavedGamesToShow = 5;
+        Intent savedGamesIntent = Games.Snapshots.getSelectSnapshotIntent(Partida.mGoogleApiClient, "Partidas guardadas", true, true, maxNumberOfSavedGamesToShow);
+        startActivityForResult(savedGamesIntent, RC_SAVED_GAMES);
+    }
+
 }

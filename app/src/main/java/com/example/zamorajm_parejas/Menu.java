@@ -9,6 +9,7 @@ import android.widget.Button;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.drive.Drive;
 import com.google.android.gms.games.Games;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class Menu extends Activity implements GoogleApiClient.ConnectionCallback
     private boolean mResolvingConnectionFailure = false;
     private boolean mAutoStartSignInflow = true;
     private boolean mSignInClicked = false;
+    private Button btnPartidasGuardadas;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -34,7 +36,21 @@ public class Menu extends Activity implements GoogleApiClient.ConnectionCallback
         btnConectar.setOnClickListener(btnConectar_Click);
         btnDesconectar = (Button) findViewById(R.id.sign_out_button);
         btnDesconectar.setOnClickListener(btnDesconectar_Click);
-        Partida.mGoogleApiClient = new GoogleApiClient.Builder(this).addConnectionCallbacks(this).addOnConnectionFailedListener(this).addApi(Games.API).addScope(Games.SCOPE_GAMES).build();
+        btnPartidasGuardadas = (Button) findViewById(R.id.btnPartidasGuardadas);
+        //Partida.mGoogleApiClient = new GoogleApiClient.Builder(this)
+        //                               .addConnectionCallbacks(this)
+        //                               .addOnConnectionFailedListener(this)
+        //                               .addApi(Games.API)
+        //                               .addScope(Games.SCOPE_GAMES)
+        //                               .build();
+        Partida.mGoogleApiClient = new GoogleApiClient.Builder(this)
+                                      .addConnectionCallbacks(this)
+                                      .addOnConnectionFailedListener(this)
+                                      .addApi(Games.API)
+                                      .addScope(Games.SCOPE_GAMES)
+                                      .addApi(Drive.API)
+                                      .addScope(Drive.SCOPE_APPFOLDER)
+                                      .build();
         SharedPreferences prefs = getSharedPreferences("Parejas", MODE_PRIVATE);
         int conectado = prefs.getInt("conectado", 0);
         if (conectado != 0) {
@@ -97,43 +113,54 @@ public class Menu extends Activity implements GoogleApiClient.ConnectionCallback
                 mResolvingConnectionFailure = false;
             }
         }
-    };
-        View.OnClickListener btnConectar_Click = new View.OnClickListener() {
-            public void onClick(View v) {
-                mSignInClicked = true;
-                mGoogleApiClient.connect();
-            }
-        };
-
-        View.OnClickListener btnDesconectar_Click = new View.OnClickListener() {
-            public void onClick(View v) {
-                mSignInClicked = false;
-                Games.signOut(mGoogleApiClient);
-                findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-                findViewById(R.id.sign_out_button).setVisibility(View.GONE);
-                SharedPreferences.Editor editor = getSharedPreferences("Parejas", MODE_PRIVATE).edit();
-                editor.putInt("conectado", 0);
-                editor.commit();
-            }
-        };
-
-        @Override public void onActivityResult ( int requestCode, int responseCode, Intent intent){
-            super.onActivityResult(requestCode, responseCode, intent);
-            switch (requestCode) {
-                case RC_SIGN_IN:
-                    mSignInClicked = false;
-                    mResolvingConnectionFailure = false;
-                    if (responseCode == RESULT_OK) {
-                        mGoogleApiClient.connect();
-                        SharedPreferences.Editor editor = getSharedPreferences("Parejas", MODE_PRIVATE).edit();
-                        editor.putInt("conectado", 1);
-                        editor.commit();
-                    } else {
-                        BaseGameUtils.showActivityResultError(this, requestCode, responseCode, R.string.unknown_error);
-                    }
-                    break;
-            }
-            super.onActivityResult(requestCode, responseCode, intent);
-        }
-
     }
+
+    ;
+
+    public void btnPartidasGuardadas_Click(View v) {
+        Partida.tipoPartida = "GUARDADA";
+        nuevoJuego(4, 4);
+        Intent intent = new Intent(this, Juego.class);
+        startActivity(intent);
+    }
+
+    View.OnClickListener btnConectar_Click = new View.OnClickListener() {
+        public void onClick(View v) {
+            mSignInClicked = true;
+            mGoogleApiClient.connect();
+        }
+    };
+
+    View.OnClickListener btnDesconectar_Click = new View.OnClickListener() {
+        public void onClick(View v) {
+            mSignInClicked = false;
+            Games.signOut(mGoogleApiClient);
+            findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
+            findViewById(R.id.sign_out_button).setVisibility(View.GONE);
+            SharedPreferences.Editor editor = getSharedPreferences("Parejas", MODE_PRIVATE).edit();
+            editor.putInt("conectado", 0);
+            editor.commit();
+        }
+    };
+
+    @Override
+    public void onActivityResult(int requestCode, int responseCode, Intent intent) {
+        super.onActivityResult(requestCode, responseCode, intent);
+        switch (requestCode) {
+            case RC_SIGN_IN:
+                mSignInClicked = false;
+                mResolvingConnectionFailure = false;
+                if (responseCode == RESULT_OK) {
+                    mGoogleApiClient.connect();
+                    SharedPreferences.Editor editor = getSharedPreferences("Parejas", MODE_PRIVATE).edit();
+                    editor.putInt("conectado", 1);
+                    editor.commit();
+                } else {
+                    BaseGameUtils.showActivityResultError(this, requestCode, responseCode, R.string.unknown_error);
+                }
+                break;
+        }
+        super.onActivityResult(requestCode, responseCode, intent);
+    }
+
+}

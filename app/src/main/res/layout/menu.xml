@@ -6,9 +6,9 @@
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"
-        android:onClick="btnConectar_Click"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:onClick="btnConectar_Click" />
 
     <Button
         android:id="@+id/sign_out_button"
@@ -17,6 +17,13 @@
         android:onClick="btnDesconectar_Click"
         android:text="Desconectar"
         android:visibility="gone" />
+
+    <Button
+        android:id="@+id/btnPartidasGuardadas"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:onClick="btnPartidasGuardadas_Click"
+        android:text="Partidas guardadas" />
 
     <Button
         android:id="@+id/btnJugar"
