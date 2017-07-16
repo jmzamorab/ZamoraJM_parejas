@@ -33,6 +33,8 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.example.zamorajm_parejas.Partida.casillas;
+
 public class Juego extends Activity {
     private static final int RC_SAVED_GAMES = 9009;
 
@@ -79,9 +81,9 @@ public class Juego extends Activity {
         }
 
         public void compruebaCasillas() {
-            if (Partida.casillas[segundaCasilla.x][segundaCasilla.y] == Partida.casillas[primeraCasilla.x][primeraCasilla.y]) { //ACIERTO
-                Partida.casillas[segundaCasilla.x][segundaCasilla.y] = 0;
-                Partida.casillas[primeraCasilla.x][primeraCasilla.y] = 0;
+            if (casillas[segundaCasilla.x][segundaCasilla.y] == casillas[primeraCasilla.x][primeraCasilla.y]) { //ACIERTO
+                casillas[segundaCasilla.x][segundaCasilla.y] = 0;
+                casillas[primeraCasilla.x][primeraCasilla.y] = 0;
                 botones[primeraCasilla.x][primeraCasilla.y].setVisibility(View.INVISIBLE);
                 botones[segundaCasilla.x][segundaCasilla.y].setVisibility(View.INVISIBLE);
                 if (Partida.turno == 1) {
@@ -148,7 +150,7 @@ public class Juego extends Activity {
 
     private void descubrirCasilla(int x, int y) {
         Button button = botones[x][y];
-        button.setBackgroundDrawable(imagenes.get(Partida.casillas[x][y]));
+        button.setBackgroundDrawable(imagenes.get(casillas[x][y]));
         if (primeraCasilla == null) {
             primeraCasilla = new Casilla(button, x, y);
         } else {
@@ -189,7 +191,7 @@ public class Juego extends Activity {
         row.setHorizontalGravity(Gravity.CENTER);
         for (int x = 0; x < Partida.COLUMNAS; x++) {
             row.addView(crearCasilla(x, y));
-            if (Partida.casillas[x][y] == 0) {
+            if (casillas[x][y] == 0) {
                 botones[x][y].setVisibility(View.INVISIBLE);
             }
         }
@@ -234,8 +236,11 @@ public class Juego extends Activity {
     }
 
     void codificaPartidaGuardada() {
-        datosPartidaGuardada = new byte[Partida.FILAS * Partida.COLUMNAS];
-        int k = 0;
+        datosPartidaGuardada = new byte[3+ (Partida.FILAS * Partida.COLUMNAS)];
+        datosPartidaGuardada[0] = (byte) Partida.turno;
+        datosPartidaGuardada[1] = (byte) Partida.puntosJ1;
+        datosPartidaGuardada[2] = (byte) Partida.puntosJ2;
+        int k = 3;
         for (int i = 0; i < Partida.FILAS; i++) {
             for (int j = 0; j < Partida.COLUMNAS; j++) {
                 datosPartidaGuardada[k] = (byte) Partida.casillas[i][j];
@@ -247,8 +252,11 @@ public class Juego extends Activity {
     void decodificaPartidaGuardada() {
         int i = 0;
         int j = 0;
-        for (int k = 0; k < Partida.FILAS * Partida.COLUMNAS; k++) {
-            Partida.casillas[i][j] = (int) datosPartidaGuardada[k];
+        Partida.turno =  datosPartidaGuardada[0];
+        Partida.puntosJ1 = datosPartidaGuardada[1];
+        Partida.puntosJ2  = datosPartidaGuardada[2];
+        for (int k = 3; k < Partida.FILAS * Partida.COLUMNAS; k++) {
+            casillas[i][j] = (int) datosPartidaGuardada[k];
             if (j < Partida.COLUMNAS - 1) {
                 j++;
             } else {
