@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.games.Games;
@@ -153,6 +154,12 @@ public class Juego extends Activity implements RoomStatusUpdateListener, RoomUpd
         @Override
         public void onClick(View v) {
             synchronized (lock) {
+                if (Partida.tipoPartida == "REAL") {
+                    if (Partida.turno != jugadorLocal) {
+                        Toast.makeText(getApplicationContext(), "No es tu turno.", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                }
                 if (primeraCasilla != null && segundaCasilla != null) {
                     return;
                 }
@@ -160,9 +167,22 @@ public class Juego extends Activity implements RoomStatusUpdateListener, RoomUpd
                 int x = id / 100;
                 int y = id % 100;
                 descubrirCasilla(x, y);
+                if (Partida.tipoPartida == "REAL") {
+                    byte[] mensaje;
+                    mensaje = new byte[3];
+                    mensaje[0] = (byte) 'C';
+                    mensaje[1] = (byte) x;
+                    mensaje[2] = (byte) y;
+                    for (Participant p : mParticipants) {
+                        if (!p.getParticipantId().equals(mMyId)) {
+                            Games.RealTimeMultiplayer.sendReliableMessage(Partida.mGoogleApiClient, null, mensaje, mRoomId, p.getParticipantId());
+                        }
+                    }
+                }
             }
         }
     }
+
 
     private void descubrirCasilla(int x, int y) {
         Button button = botones[x][y];
@@ -484,7 +504,21 @@ public class Juego extends Activity implements RoomStatusUpdateListener, RoomUpd
     //RealTimeMessageReceivedListener
     @Override
     public void onRealTimeMessageReceived(RealTimeMessage rtm) {
+        byte[] buf = rtm.getMessageData();
+        String sender = rtm.getSenderParticipantId();
+        if (buf[0] == 'A') {
+            int x = buf[1];
+            int y = buf[2];
+            int valor = buf[3];
+            Partida.casillas[x][y] = valor;
+        }
+        if (buf[0] == 'C') {
+            int x = buf[1];
+            int y = buf[2];
+            descubrirCasilla(x, y);
+        }
     }
+
 
     private void iniciarPartidaEnTiempoReal() {
         final int NUMERO_MINIMO_OPONENTES = 1, NUMERO_MAXIMO_OPONENTES = 1;
