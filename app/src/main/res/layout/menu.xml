@@ -60,5 +60,10 @@
         android:onClick="btnMarcadores_Click"
         android:text="Marcadores" />
 
-
+    <Button
+        android:id="@+id/btnLogros"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:onClick="btnLogros_Click"
+        android:text="Logros" />
 </LinearLayout>

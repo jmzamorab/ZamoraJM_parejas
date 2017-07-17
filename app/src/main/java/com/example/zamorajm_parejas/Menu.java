@@ -39,6 +39,9 @@ public class Menu extends Activity implements GoogleApiClient.ConnectionCallback
     //Marcadores
     private Button btnMarcadores;
     final static int REQUEST_LEADERBOARD = 100;
+    // Logros
+    private Button btnLogros;
+    final static int REQUEST_ACHIEVEMENTS = 101;
 
     String mIncomingInvitationId = null;
     final static int RC_SELECT_PLAYERS = 10000;
@@ -58,6 +61,7 @@ public class Menu extends Activity implements GoogleApiClient.ConnectionCallback
         btnInvitar = (Button) findViewById(R.id.btnInvitar);
         btnPartidaPorTurnos = (Button) findViewById(R.id.btnPartidaPorTurnos);
         btnMarcadores = (Button) findViewById(R.id.btnMarcadores);
+        btnLogros = (Button) findViewById(R.id.btnLogros);
         //Partida.mGoogleApiClient = new GoogleApiClient.Builder(this)
         //                               .addConnectionCallbacks(this)
         //                               .addOnConnectionFailedListener(this)
@@ -224,6 +228,7 @@ public class Menu extends Activity implements GoogleApiClient.ConnectionCallback
         final int NUMERO_MINIMO_OPONENTES = 1, NUMERO_MAXIMO_OPONENTES = 1;
         Intent intent = Games.TurnBasedMultiplayer.getSelectOpponentsIntent(Partida.mGoogleApiClient, NUMERO_MINIMO_OPONENTES, NUMERO_MAXIMO_OPONENTES, true);
         startActivityForResult(intent, RC_SELECT_PLAYERS);
+        Games.Achievements.unlock(Partida.mGoogleApiClient, getString(R.string.logro_invitar));
     }
 
     public void btnPartidaPorTurnos_Click(View v) {
@@ -235,5 +240,9 @@ public class Menu extends Activity implements GoogleApiClient.ConnectionCallback
 
     public void btnMarcadores_Click(View v) {
         startActivityForResult(Games.Leaderboards.getLeaderboardIntent(Partida.mGoogleApiClient, getString(R.string.marcador_tiempoReal_id)), REQUEST_LEADERBOARD);
+    }
+
+    public void btnLogros_Click(View v) {
+        startActivityForResult(Games.Achievements.getAchievementsIntent(Partida.mGoogleApiClient), REQUEST_ACHIEVEMENTS);
     }
 }
