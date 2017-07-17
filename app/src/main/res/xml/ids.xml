@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_id">466760936707</string>
-    <string name="marcador_tiempoReal_id">CgkIg9r66MoNEAIQAQ </string>
-    <string name="logro_invitar">CgkIg9r66MoNEAIQAg </string>
+    <string name="marcador_tiempoReal_id">CgkIg9r66MoNEAIQAQ</string>
+    <string name="logro_invitar">CgkIg9r66MoNEAIQAg</string>
+    <string name="logro_tiempoReal">CgkIg9r66MoNEAIQAw</string>
 </resources>

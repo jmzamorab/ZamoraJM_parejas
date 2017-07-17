@@ -210,6 +210,7 @@ public class Menu extends Activity implements GoogleApiClient.ConnectionCallback
         nuevoJuego(4, 4);
         Intent intent = new Intent(this, Juego.class);
         startActivity(intent);
+        Games.Achievements.increment(Partida.mGoogleApiClient, getString(R.string.logro_tiempoReal), 1);
     }
 
     @Override
