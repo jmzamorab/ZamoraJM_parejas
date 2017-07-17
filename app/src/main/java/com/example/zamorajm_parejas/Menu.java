@@ -30,9 +30,15 @@ public class Menu extends Activity implements GoogleApiClient.ConnectionCallback
     private boolean mResolvingConnectionFailure = false;
     private boolean mAutoStartSignInflow = true;
     private boolean mSignInClicked = false;
+    // Partidas Guardadas
     private Button btnPartidasGuardadas;
+    //Partida en Tiempo Real
     private Button btnPartidaEnTiempoReal;
+    //Partida por turnos
     private Button btnPartidaPorTurnos;
+    //Marcadores
+    private Button btnMarcadores;
+    final static int REQUEST_LEADERBOARD = 100;
 
     String mIncomingInvitationId = null;
     final static int RC_SELECT_PLAYERS = 10000;
@@ -51,6 +57,7 @@ public class Menu extends Activity implements GoogleApiClient.ConnectionCallback
         btnPartidaEnTiempoReal = (Button) findViewById(R.id.btnPartidaEnTiempoReal);
         btnInvitar = (Button) findViewById(R.id.btnInvitar);
         btnPartidaPorTurnos = (Button) findViewById(R.id.btnPartidaPorTurnos);
+        btnMarcadores = (Button) findViewById(R.id.btnMarcadores);
         //Partida.mGoogleApiClient = new GoogleApiClient.Builder(this)
         //                               .addConnectionCallbacks(this)
         //                               .addOnConnectionFailedListener(this)
@@ -224,5 +231,9 @@ public class Menu extends Activity implements GoogleApiClient.ConnectionCallback
         nuevoJuego(4, 4);
         Intent intent = new Intent(this, Juego.class);
         startActivity(intent);
+    }
+
+    public void btnMarcadores_Click(View v) {
+        startActivityForResult(Games.Leaderboards.getLeaderboardIntent(Partida.mGoogleApiClient, getString(R.string.marcador_tiempoReal_id)), REQUEST_LEADERBOARD);
     }
 }
